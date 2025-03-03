@@ -1,33 +1,46 @@
-#include "Timer.h"
 #include "motor_task.h"
+#include "FreeRTOS.h"
+#include "Timer.h"
+#include "timers.h"
+#include "queue.h"
+#include "semphr.h"
 
+
+#define FREQ 10000
+
+extern QueueHandle_t target_speed_queue;
+extern QueueHandle_t encoder_speed_queue;
 
 float Kp = 1.0, Ki = 0.1, Kd = 0.05;
 float prev_error = 0, integral = 0;
+volatile uint8_t duty_cycle;
 
-float Motor_PID_Controller(float target_speed) {
-	
-	float encoder_speed = Encoder_GetSpeed();
-	
-    float error = target_speed - encoder_speed;
+void PID_Task(void *pvParameters) {
+    int32_t target_speed = 0;
+    int32_t encoder_speed = 0;
+    
+    while (1) {
+        // Nh?n t?c d? mong mu?n t? UART Task
+        xQueueReceive(target_speed_queue, (void *)&target_speed, portMAX_DELAY);
 
-    // PID Control
-    integral += error;
-    float derivative = error - prev_error;
-    float output = Kp * error + Ki * integral + Kd * derivative;
-    prev_error = error;
-	
-	return output;
-}
+        // Nh?n t?c d? th?c t? t? Encoder Task
+        xQueueReceive(encoder_speed_queue, (void *)&encoder_speed, portMAX_DELAY);
 
-void motor_set_speed(float target_speed, int fre) {
-	
-    float pid_output = Motor_PID_Controller(target_speed);
+        // Tính toán PID
+        float error = target_speed - encoder_speed;
+        integral += error;
+        float derivative = error - prev_error;
+        prev_error = error;
 
-    // Gi?i h?n tín hi?u PWM trong kho?ng 0 - 100%
-    if (pid_output > 1000) pid_output = 1000;
-    if (pid_output < 0) pid_output = 0;
+        // Ði?u ch?nh duty cycle d?a trên PID
+        duty_cycle = (uint8_t)(Kp * error + Ki * integral + Kd * derivative);
+        if (duty_cycle > 100) duty_cycle = 100;  // Gi?i h?n PWM max
+        if (duty_cycle < 0) duty_cycle = 0;      // Gi?i h?n PWM min
+        
+        TIM1_PWMOC(FREQ, duty_cycle);
 
-	TIM1_PWMOC(fre, pid_output);
+        // Delay 100ms d? PID ch?y liên t?c
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
 }
 

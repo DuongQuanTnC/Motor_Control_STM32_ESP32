@@ -22,28 +22,48 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 C:\Users\duong\Desktop\Motor_Control\STM32_Code\main.uvprojx
-Project File Date:  02/26/2025
+Project File Date:  03/03/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.22', folder: 'D:\Keil\Keil_v5\ARM\ARMCLANG\Bin'
 Rebuild target 'Motor_Control'
-compiling uart_task.c...
+assembling startup_stm32f10x_md.s...
 compiling Timer.c...
 compiling RCC.c...
-compiling encoder_task.c...
-assembling startup_stm32f10x_md.s...
-compiling motor_task.c...
 compiling USART.c...
-main.c(55): warning: unused variable 'speed' [-Wunused-variable]
-   55 |         float speed = getSpeed();
-      |               ^~~~~
-1 warning generated.
 compiling main.c...
+motor_task.c(18): warning: unused parameter 'pvParameters' [-Wunused-parameter]
+   18 | void PID_Task(void *pvParameters) {
+      |                     ^
+1 warning generated.
+compiling motor_task.c...
+uart_task.c(14): warning: unused parameter 'pvParameters' [-Wunused-parameter]
+   14 | void UART_Recieve_Task(void *pvParameters) {
+      |                              ^
+uart_task.c(32): warning: unused parameter 'pvParameters' [-Wunused-parameter]
+   32 | void UART_Transmit_Task(void *pvParameters) {
+      |                               ^
+2 warnings generated.
+compiling uart_task.c...
+encoder_task.c(30): warning: unused parameter 'pvParameters' [-Wunused-parameter]
+   30 | void Encoder_Task(void *pvParameters) {
+      |                         ^
+1 warning generated.
+compiling encoder_task.c...
 compiling system_stm32f10x.c...
 linking...
-Program Size: Code=15352 RO-data=800 RW-data=0 ZI-data=1680  
-FromELF: creating hex file...
-".\Objects\main.axf" - 0 Error(s), 1 Warning(s).
+.\Objects\main.axf: Error: L6218E: Undefined symbol xQueueReceive (referred from motor_task.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol vTaskDelay (referred from motor_task.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol xQueueSemaphoreTake (referred from encoder_task.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol xQueueGenericSend (referred from encoder_task.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol xQueueCreateMutex (referred from main.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol xQueueGenericCreate (referred from main.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol xTaskCreate (referred from main.o).
+.\Objects\main.axf: Error: L6218E: Undefined symbol vTaskStartScheduler (referred from main.o).
+Not enough information to list image symbols.
+Not enough information to list load addresses in the image map.
+Finished: 2 information, 0 warning and 8 error messages.
+".\Objects\main.axf" - 8 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -70,11 +90,12 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE@6.1.0
 
    * Component: Keil::Device:Startup@1.0.0
+      Include file:  RTE_Driver/Config/RTE_Device.h
       Source file:   Device/Source/ARM/startup_stm32f10x_md.s
       Source file:   Device/Source/ARM/STM32F1xx_OPT.s
       Source file:   Device/Source/system_stm32f10x.c
-      Include file:  RTE_Driver/Config/RTE_Device.h
-Build Time Elapsed:  00:00:01
+Target not created.
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

@@ -5,13 +5,19 @@
 #include "RCC.h"
 #include "USART.h"
 #include "Timer.h"
-#include "encoder_task.h"
-#include "motor_task.h"
-#include "uart_task.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+#include "timers.h"
 #include <stdio.h>
 
+SemaphoreHandle_t speedMutex;
 
+// Hàng d?i truy?n d? li?u gi?a các task
+//extern QueueHandle_t uartQueue;
+QueueHandle_t target_speed_queue;
+QueueHandle_t encoder_speed_queue;
 
 
 //Configure USART1
